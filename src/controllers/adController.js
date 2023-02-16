@@ -27,4 +27,12 @@ adRouter.post('/create', isAuthenticated, async (req, res) => {
     res.redirect('/ads/all');
 });
 
+adRouter.get('/:adId/details', async (req, res)=> {
+    const ad = await adService.getOne(req.params.adId);
+    const isAuthor = ad.author._id == req.user._id;
+    const applicants = ad.applicants;
+
+    res.render('ad/details', {ad, isAuthor, applicants});
+});
+
 module.exports = adRouter;
