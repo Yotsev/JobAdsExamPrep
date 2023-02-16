@@ -2,25 +2,24 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('../libs/jsonwebtoken');
 const config = require('../configs/config');
+const { minPasswordLength } = require('../constants');
 
-exports.getUserByEmail = (email)=> User.findOne({email});
+exports.getUserByEmail = (email) => User.findOne({ email });
 
 exports.getExistingUser = async (username, email) => {
-    const existingUser = await User.findOne({$or: [{email}, {username}]});
-    
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+
     return existingUser;
 };
 
 exports.register = async (user) => {
-    const passwordLenght = 5;
-
     const existingUser = await this.getUserByEmail(user.email);
 
     if (existingUser) {
         throw new Error('User exists');
     }
 
-    if (user.password.length < passwordLenght) {
+    if (user.password.length < minPasswordLength) {
         throw new Error('Password must be at least 5 characters long');
     }
 
@@ -30,7 +29,7 @@ exports.register = async (user) => {
 
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
-    await User.create({ ...user, password:hashedPassword });
+    await User.create({ ...user, password: hashedPassword });
 
     return this.login(user.email, user.password);
 };

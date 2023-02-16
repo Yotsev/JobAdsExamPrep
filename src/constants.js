@@ -5,3 +5,5 @@ exports.categoriesMap = {
     "electronics": "Electronics",
     "other": "Other",
 };
+
+exports.minPasswordLength = 5;
