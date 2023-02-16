@@ -6,21 +6,16 @@ const userSchema = new mongoose.Schema({
         required: [true,'Email is rerequired'],
         validate: [/^[A-Za-z]+@[A-Za-z]+.[A-Za-z]+$/,'Email must contain only latin letters'],
     },
-    firstName: {
-        type: String,
-        required: [true,'First name is rerequired'],
-        minLength: [1, 'First name must be at least 1 characters long'],
-
-    },
-    lastName: {
+    description: {
         type: String,
         required: [true,'Last name is rerequired'],
-        minLength: [1, 'Lirst name must be at least 1 characters long'],
     },
     password: {
         type: String,
         required: [true,'Password is rerequired'],
-    }
+    },
+
+    //TODO add ref to ADS
 });
 
 const User = mongoose.model('User', userSchema);
