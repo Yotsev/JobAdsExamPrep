@@ -14,8 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true,'Password is rerequired'],
     },
-
-    //TODO add ref to ADS
+    my_ads: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Ad',
+    }],
 });
 
 const User = mongoose.model('User', userSchema);
