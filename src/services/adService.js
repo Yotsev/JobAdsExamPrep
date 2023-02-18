@@ -1,6 +1,6 @@
 const Ad = require('../models/Ad');
 
-exports.getAll = () => Ad.find({}).lean();
+exports.getAll = () => Ad.find({}).populate('author').lean();
 
 exports.getThreeAds = ()=> Ad.find({}).limit(3).lean();
 
@@ -18,3 +18,9 @@ exports.apply = async (adid, userId) => {
     ad.applicants.push(userId);
     await ad.save();
 };
+
+exports.search = async (email)=> {
+    const ads = (await this.getAll()).filter(x=>x.author.email.toLowerCase() == email?.toLowerCase());
+
+    return ads;
+}

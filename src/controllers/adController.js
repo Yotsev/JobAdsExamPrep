@@ -32,59 +32,59 @@ adRouter.get('/:adId/details', async (req, res) => {
     const isAuthor = ad.author._id == req.user?._id;
     const hasNotApplied = !ad.applicants.some(x => x._id == req.params._id);
     const applicants = ad.applicants;
-    
+
     res.render('ad/details', { ad, isAuthor, hasNotApplied, applicants });
 });
 
-adRouter.get('/:adId/apply', isAuthenticated, async(req, res)=> {
+adRouter.get('/:adId/apply', isAuthenticated, async (req, res) => {
     const ad = await adService.getOne(req.params.adId);
-    
+
     const isAuthor = ad.author._id == req.user?._id;
     const hasNotApplied = !ad.applicants.some(x => x._id == req.params._id);
     const applicants = ad.applicants;
 
-    try{
-        if (ad.author._id == req.user._id){
-            
+    try {
+        if (ad.author._id == req.user._id) {
+
             throw new Error(`You can't apply to own ad`);
         }
-        
-        if (ad.applicants.some(x=>x._id == req.user._id)) {
+
+        if (ad.applicants.some(x => x._id == req.user._id)) {
             throw new Error(`You have already applyed to the ad`);
         }
 
         await adService.apply(req.params.adId, req.user._id);
-    }catch(err){
-        return res.status(403).render(`ad/details`, {ad,isAuthor, hasNotApplied, applicants, error: getErrorMessage(err)});
+    } catch (err) {
+        return res.status(403).render(`ad/details`, { ad, isAuthor, hasNotApplied, applicants, error: getErrorMessage(err) });
     }
 
     res.redirect(`/ads/${req.params.adId}/details`);
 });
 
-adRouter.get('/:adid/edit',isAuthenticated, async (req, res)=> {
+adRouter.get('/:adid/edit', isAuthenticated, async (req, res) => {
     const ad = await adService.getOne(req.params.adid);
 
-        if (ad.author._id != req.user?._id) {
-            return res.redirect('/404');
-        }
+    if (ad.author._id != req.user?._id) {
+        return res.redirect('/404');
+    }
 
-        res.render('ad/edit', {ad});
+    res.render('ad/edit', { ad });
 });
 
-adRouter.post('/:adId/edit', isAuthenticated, async(req,res)=> {
+adRouter.post('/:adId/edit', isAuthenticated, async (req, res) => {
     ad = req.body;
 
-    try{
+    try {
 
         await adService.edit(req.params.adId, ad);
-    }catch (err){
-        return res.status(400).render('ad/edit', {ad, error: getErrorMessage(err)});
+    } catch (err) {
+        return res.status(400).render('ad/edit', { ad, error: getErrorMessage(err) });
     }
 
     res.redirect(`/ads/${req.params.adId}/details`);
 });
 
-adRouter.get('/:adId/delete',isAuthenticated, async (req, res)=> {
+adRouter.get('/:adId/delete', isAuthenticated, async (req, res) => {
     const ad = await adService.getOne(req.params.adId);
 
     if (ad.author._id != req.user._id) {
@@ -94,6 +94,14 @@ adRouter.get('/:adId/delete',isAuthenticated, async (req, res)=> {
     await adService.delete(req.params.adId);
 
     res.redirect('/ads/all');
+});
+
+adRouter.get('/search', isAuthenticated, async (req, res) => {
+    const { search } = req.query;
+
+    const result = await adService.search(search);
+
+    res.render('ad/search', { result });
 });
 
 module.exports = adRouter;
