@@ -1,13 +1,13 @@
 const authController = require('express').Router();
 const authService = require('../services/authService');
 const { getErrorMessage } = require('../utils/errorParser');
+const { isLoggedIn } = require('../middlewares/authMiddleware');
 
-
-authController.get('/register', (req, res) => {
+authController.get('/register', isLoggedIn, (req, res) => {
     res.render('auth/register');
 });
 
-authController.post('/register', async (req, res) => {
+authController.post('/register', isLoggedIn, async (req, res) => {
     const user = req.body;
 
     try {
@@ -21,11 +21,11 @@ authController.post('/register', async (req, res) => {
     }
 });
 
-authController.get('/login', (req, res) => {
+authController.get('/login',isLoggedIn, (req, res) => {
     res.render('auth/login');
 });
 
-authController.post('/login', async (req, res) => {
+authController.post('/login', isLoggedIn, async (req, res) => {
     const { email, password } = req.body;
 
     try {

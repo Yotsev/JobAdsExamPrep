@@ -1,7 +1,10 @@
 const homeRouter = require('express').Router();
+const adService = require('../services/adService');
 
-homeRouter.get('/', (req, res) => {
-    res.render('home/home');
+homeRouter.get('/', async (req, res) => {
+    const firstThree = await adService.getThreeAds();
+
+    res.render('home/home', { firstThree });
 });
 
 homeRouter.get('/404', (req, res) => {
